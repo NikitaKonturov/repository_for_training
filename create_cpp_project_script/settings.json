@@ -1,0 +1,17 @@
+{
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.iconTheme": "vscode-icons",
+    "actionButtons": {
+        "commands": [
+            {
+                "name": "☭Create☭cpp☭Project☭",
+                "color": "red",
+                "useVsCodeApi": false,
+                "command": "create_cpp_project "
+            }
+        ],
+        "defaultColor": "green",
+        "reloadButton": "♻️",
+        "loadNpmCommands": false
+    }
+}
