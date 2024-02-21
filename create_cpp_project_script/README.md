@@ -50,7 +50,7 @@
 
  Для ещё большего упращения работе в vscode создадим кнопку в нём которая будет активировать наш скрипт
 
- 1. Заходим в vscode и устанавливаем extension `VSCode Action Buttons Ext` ![Пример](https://github.com/NikitaKonturov/repository_for_training/blob/branchToscript/create_cpp_project_script/create_cpp_project_script/img/Action_Buttons.png)
+ 1. Заходим в vscode и устанавливаем extension `VSCode Action Buttons Ext` ![Пример](https://github.com/NikitaKonturov/repository_for_training/blob/branchToscript/create_cpp_project_script/img/Action_Buttons.png)
  Это расширение поможет нам создать кнопки в нижней понеле vscode 
  ![Пример](https://github.com/NikitaKonturov/repository_for_training/blob/branchToscript/create_cpp_project_script/img/ExempleToSettings.png)
  2. Заходим в настройки vscode
