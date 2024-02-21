@@ -183,10 +183,10 @@ echo "
             \"name\": \"Bazel Debug\",
             \"type\": \"cppdbg\",
             \"request\": \"launch\",
-            \"program\": \"${workspaceFolder}/bazel-bin/src/main/cpp_app\",
+            \"program\": \"\${workspaceFolder}/bazel-bin/src/main/cpp_app\",
             \"args\": [],
             \"stopAtEntry\": false,
-            \"cwd\": \"${workspaceFolder}\",
+            \"cwd\": \"\${workspaceFolder}\",
             \"environment\": [],
             \"externalConsole\": false,  
             \"MIMode\": \"gdb\",
@@ -205,10 +205,10 @@ echo "
             \"name\": \"Bazel Release\",
             \"type\": \"cppdbg\",
             \"request\": \"launch\",
-            \"program\": \"${workspaceFolder}/bazel-bin/src/main/cpp_app\",
+            \"program\": \"\${workspaceFolder}/bazel-bin/src/main/cpp_app\",
             \"args\": [],
             \"stopAtEntry\": false,
-            \"cwd\": \"${workspaceFolder}\",
+            \"cwd\": \"\${workspaceFolder}\",
             \"environment\": [],
             \"externalConsole\": false,
             \"MIMode\": \"gdb\",
@@ -219,10 +219,10 @@ echo "
             \"name\": \"Bazel Test\",
             \"type\": \"cppdbg\",
             \"request\": \"launch\",
-            \"program\": \"${workspaceFolder}/bazel-bin/src/tests/tests\",
+            \"program\": \"\${workspaceFolder}/bazel-bin/src/tests/tests\",
             \"args\": [],
             \"stopAtEntry\": false,
-            \"cwd\": \"${workspaceFolder}\",
+            \"cwd\": \"\${workspaceFolder}\",
             \"externalConsole\": false,
             \"miDebuggerArgs\": \"-q -ex quit; wait() { fg >/dev/null; }; /bin/gdb -q --interpreter=mi\",
             \"preLaunchTask\": \"bazel-test\"
@@ -236,11 +236,11 @@ echo "
         {
             \"name\": \"Linux\",
             \"includePath\": [
-                \"${workspaceFolder}/bazel-bin/**\",
-                \"${workspaceFolder}/bazel-out/**\",
-                \"${workspaceFolder}/bazel-${workspaceFolderBasename}/**\"
+                \"\${workspaceFolder}/bazel-bin/**\",
+                \"\${workspaceFolder}/bazel-out/**\",
+                \"\${workspaceFolder}/bazel-\${workspaceFolderBasename}/**\"
             ],
-            \"intelliSenseMode\": \"${default}\",
+            \"intelliSenseMode\": \"\${default}\",
             \"cppStandard\": \"c++20\"
         }
     ],
@@ -251,5 +251,4 @@ echo "
 cd ..
 
 bazel build //src/main:cpp_app
-
 }
