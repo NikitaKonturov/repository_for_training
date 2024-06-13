@@ -7,33 +7,35 @@
 #include "../task/task.hpp"
 
 
-class TaskQueue 
+namespace Thread_Pool 
 {
-private:
-    std::queue<std::shared_ptr<BaseTask>> tasks;
-public:
+    class TaskQueue 
+    {
+    private:
+        std::queue<std::shared_ptr<BaseTask>> tasks;
+    public:
 
-/*============== Конструкторы ==============*/
+    /*============== Конструкторы ==============*/
 
-    TaskQueue() = default;
-    ~TaskQueue() = default;
+        TaskQueue() = default;
+        ~TaskQueue() = default;
 
-/*================= Сетеры =================*/
+    /*================= Сетеры =================*/
 
-    // Добавление задачи
-    template<typename Result, typename ...TypeArgs>
-    size_t put(const Task<Result, TypeArgs...>& sourceTask);
+        // Добавление задачи
+        template<typename Result, typename ...TypeArgs>
+        size_t put(const Task<Result, TypeArgs...>& sourceTask);
 
-/*================= Гетеры =================*/
-    
-    // Получение задачи 
-    std::shared_ptr<BaseTask> get();
-    // Получение размера
-    size_t size() const;
-    // Проверка на пустоту
-    bool empty() const;
-};
-
+    /*================= Гетеры =================*/
+        
+        // Получение задачи 
+        std::shared_ptr<BaseTask> get();
+        // Получение размера
+        size_t size() const;
+        // Проверка на пустоту
+        bool empty() const;
+    };
+}
 
 #include "taskQueue.inl"
 

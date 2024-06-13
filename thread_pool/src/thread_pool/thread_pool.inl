@@ -5,11 +5,11 @@
 /*===================== Задача для потока =====================*/
 /*=============================================================*/
 
-const std::function<void(TaskQueue&, 
-                         std::map<size_t, std::shared_ptr<BaseTask>>&, 
+const std::function<void(Thread_Pool::TaskQueue&, 
+                         std::map<size_t, std::shared_ptr<Thread_Pool::BaseTask>>&, 
                          std::atomic<bool>&,
                          std::unique_ptr<std::atomic<bool>>&
-                         )> ThreadPool::executeTasks = [](TaskQueue& unfulfilledTasks, 
+                         )> Thread_Pool::ThreadPool::executeTasks = [](TaskQueue& unfulfilledTasks, 
                                                                         std::map<size_t, std::shared_ptr<BaseTask>>& completedTasks, 
                                                                         std::atomic<bool>& controler,
                                                                         std::unique_ptr<std::atomic<bool>>& is_working
@@ -19,11 +19,14 @@ const std::function<void(TaskQueue&,
         *is_working = false;
         while (!unfulfilledTasks.empty()) {
             *is_working = true;
-            std::lock_guard<std::mutex> getTask(unfulfilledTasksMutex);
+           // std::lock_guard<std::mutex> getTask(unfulfilledTasksMutex);
+            unfulfilledTasksMutex.lock();
             std::shared_ptr<BaseTask> executebleTask = unfulfilledTasks.get();
+            unfulfilledTasksMutex.unlock();
             executebleTask->start();
-            std::lock_guard<std::mutex> putTask(completedTasksMutex);
+            completedTasksMutex.lock();
             completedTasks.insert({executebleTask->getID(), executebleTask});
+            completedTasksMutex.unlock();
             *is_working = false;
         }
     }
@@ -34,11 +37,11 @@ const std::function<void(TaskQueue&,
 /*======================= Констркукторы =======================*/
 /*=============================================================*/
 
-ThreadPool::ThreadPool(size_t threadCount) : threads(threadCount)
+Thread_Pool::ThreadPool::ThreadPool(size_t threadCount) : threads(threadCount)
 {}
 
 
-ThreadPool::~ThreadPool()
+Thread_Pool::ThreadPool::~ThreadPool()
 {
     this->stop();
 }
@@ -50,7 +53,7 @@ ThreadPool::~ThreadPool()
 
 // Добавление задачи(возвращение ID задачи)
 template<typename Result, typename ...TypeArgs>
-size_t ThreadPool::addTask(const Task<Result, TypeArgs...>& source)
+size_t Thread_Pool::ThreadPool::addTask(const Task<Result, TypeArgs...>& source)
 {
     return unfulfilledTasks.put(source);
 }
@@ -61,7 +64,7 @@ size_t ThreadPool::addTask(const Task<Result, TypeArgs...>& source)
 /*=============================================================*/
 
 // Запуск всех потоков
-void ThreadPool::start()
+void Thread_Pool::ThreadPool::start()
 {
     this->threadsStatus.clear();
     this->controller = true;
@@ -77,7 +80,7 @@ void ThreadPool::start()
 }
 
 // Остановка всех потоков(посылаеться сигнал они заканчивают выполнение уже начатой задачи и больше задачь не берут)
-void ThreadPool::stop()
+void Thread_Pool::ThreadPool::stop()
 {
     this->controller = false;
     bool allStatus = false;
@@ -91,11 +94,11 @@ void ThreadPool::stop()
 
 
 /*=============================================================*/
-/*========= Методы для для получения выполненых задачь ========*/
+/*========= Методы для для получения выполненых задач =========*/
 /*=============================================================*/
 
 template<typename Result, typename ...TypeArgs>
-std::optional<Task<Result, TypeArgs...>> ThreadPool::getCompletedTask(size_t taskID)
+std::optional<Thread_Pool::Task<Result, TypeArgs...>> Thread_Pool::ThreadPool::getCompletedTask(size_t taskID)
 {
     auto foundTaskIter = this->completedTasks.find(taskID);
     if(foundTaskIter == this->completedTasks.end()) {
@@ -106,5 +109,6 @@ std::optional<Task<Result, TypeArgs...>> ThreadPool::getCompletedTask(size_t tas
         return std::nullopt;
     }
 
+    
     return *foundTaskPtr;
 }

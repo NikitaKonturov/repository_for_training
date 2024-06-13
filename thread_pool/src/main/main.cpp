@@ -5,19 +5,23 @@
 
 int main()
 {
-    ThreadPool pool;
+    try {
+        Thread_Pool::ThreadPool pool;
 
-    size_t firstTaskID = 0;
-    firstTaskID = pool.addTask(Task<int, int, int>(5, 5, [](int first, int second){return first + second;}));
-    size_t secondTaskID = pool.addTask(Task<void, std::string>("Hellow world!", [](std::string mes){std::cout << mes << std::endl;}));
-    pool.start();
+        size_t firstTaskID = 0;
+        firstTaskID = pool.addTask(Thread_Pool::Task<int, int, int>(5, 0, [](int first, int second){
+            throw std::exception();
+            return first + second;}));
+        size_t secondTaskID = pool.addTask(Thread_Pool::Task<void, std::string>("Hellow world!", [](std::string mes){std::cout << mes << std::endl;}));
+        pool.start();
 
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+        pool.stop();
 
-    pool.stop();
-
-    std::cout << pool.getCompletedTask<int, int, int>(firstTaskID)->getResult() << std::endl;
-
-//    std::cout << "Hello world!" << std::endl;
+        std::cout << pool.getCompletedTask<int, int, int>(firstTaskID)->getResult() << std::endl;
+  
+    }
+    catch(std::exception &err) {
+        std::cerr << "\033[31m" << "[FATAL]" << err.what() << "\033[0m" << std::endl;
+    }
     return 0;
 }
