@@ -24,13 +24,13 @@ namespace Thread_Pool
         static const std::function<void(TaskQueue&, 
                                 std::map<size_t, std::shared_ptr<BaseTask>>&, 
                                 std::atomic<bool>&,
-                                std::unique_ptr<std::atomic<bool>>&
+                                std::atomic<bool>&
                                 )> executeTasks;
         std::vector<std::thread> threads;
         TaskQueue unfulfilledTasks;
         std::map<size_t, std::shared_ptr<BaseTask>> completedTasks;
-        std::unordered_map<std::thread::id, std::unique_ptr<std::atomic<bool>>> threadsStatus;
-        std::atomic<bool> controller;
+        std::unordered_map<std::thread::id, std::atomic<bool>> threadsStatus;
+        std::unordered_map<std::thread::id, std::atomic<bool>> threadControllers;
     public:
     /*==================== Конструкторы ====================*/
         ThreadPool(size_t threadCount = 5);
@@ -42,13 +42,16 @@ namespace Thread_Pool
         template<typename Result, typename ...TypeArgs>
         size_t addTask(const Task<Result, TypeArgs...>& source);   
 
-    /*======== Методы для управления всеми потоками ========*/
+    /*======== Методы для управления потоками ========*/
 
     // Запуск всех потоков
         void start();
 
     // Остановка всех потоков
         void stop();
+
+    // ОСтановка одного потока
+        void stop(const std::thread::id& sourceID);
 
     /*====== Методы для получения обработанной задачи ======*/
 

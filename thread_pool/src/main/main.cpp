@@ -6,11 +6,11 @@
 int main()
 {
     try {
-        Thread_Pool::ThreadPool pool;
+        Thread_Pool::ThreadPool pool(10);
 
         size_t firstTaskID = 0;
         firstTaskID = pool.addTask(Thread_Pool::Task<int, int, int>(5, 0, [](int first, int second){
-            throw std::exception();
+            //throw std::exception();
             return first + second;}));
         size_t secondTaskID = pool.addTask(Thread_Pool::Task<void, std::string>("Hellow world!", [](std::string mes){std::cout << mes << std::endl;}));
         pool.start();

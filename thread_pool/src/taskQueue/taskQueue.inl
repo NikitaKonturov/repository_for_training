@@ -9,7 +9,7 @@
 template<typename Result, typename ...TypeArgs>
 size_t Thread_Pool::TaskQueue::put(const Task<Result, TypeArgs...>& sourceTask)
 {   
-    std::shared_ptr<Thread_Pool::BaseTask> sourceBaseTask = std::make_shared<Task<Result, TypeArgs...>>(sourceTask);
+    std::shared_ptr<Thread_Pool::BaseTask> sourceBaseTask = std::make_shared<Task<Result, TypeArgs...>>(std::move(sourceTask));
     this->tasks.push(sourceBaseTask);
     return sourceBaseTask->getID();
 }   

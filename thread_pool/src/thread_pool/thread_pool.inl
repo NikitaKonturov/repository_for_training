@@ -8,18 +8,17 @@
 const std::function<void(Thread_Pool::TaskQueue&, 
                          std::map<size_t, std::shared_ptr<Thread_Pool::BaseTask>>&, 
                          std::atomic<bool>&,
-                         std::unique_ptr<std::atomic<bool>>&
+                         std::atomic<bool>&
                          )> Thread_Pool::ThreadPool::executeTasks = [](TaskQueue& unfulfilledTasks, 
                                                                         std::map<size_t, std::shared_ptr<BaseTask>>& completedTasks, 
                                                                         std::atomic<bool>& controler,
-                                                                        std::unique_ptr<std::atomic<bool>>& is_working
+                                                                        std::atomic<bool>& is_working
                                                                         ) 
 {
     while(controler) {    
-        *is_working = false;
+        is_working = false;
         while (!unfulfilledTasks.empty()) {
-            *is_working = true;
-           // std::lock_guard<std::mutex> getTask(unfulfilledTasksMutex);
+            is_working = true;
             unfulfilledTasksMutex.lock();
             std::shared_ptr<BaseTask> executebleTask = unfulfilledTasks.get();
             unfulfilledTasksMutex.unlock();
@@ -27,9 +26,9 @@ const std::function<void(Thread_Pool::TaskQueue&,
             completedTasksMutex.lock();
             completedTasks.insert({executebleTask->getID(), executebleTask});
             completedTasksMutex.unlock();
-            *is_working = false;
+            is_working = false;
         }
-    }
+    } 
 };
 
 
@@ -38,7 +37,10 @@ const std::function<void(Thread_Pool::TaskQueue&,
 /*=============================================================*/
 
 Thread_Pool::ThreadPool::ThreadPool(size_t threadCount) : threads(threadCount)
-{}
+{
+    threadsStatus.clear();
+    threadControllers.clear();
+}
 
 
 Thread_Pool::ThreadPool::~ThreadPool()
@@ -64,32 +66,53 @@ size_t Thread_Pool::ThreadPool::addTask(const Task<Result, TypeArgs...>& source)
 /*=============================================================*/
 
 // Запуск всех потоков
-void Thread_Pool::ThreadPool::start()
+void Thread_Pool::ThreadPool::start() 
 {
     this->threadsStatus.clear();
-    this->controller = true;
+    this->threadControllers.clear();
     for (size_t i = 0; i < this->threads.size(); ++i) {
-        this->threadsStatus[threads[i].get_id()] = std::make_unique<std::atomic<bool>>(false);
+        this->threadsStatus[this->threads[i].get_id()] = false;
+        this->threadControllers[this->threads[i].get_id()] = true;
         this->threads[i] = std::thread(std::ref(this->executeTasks), 
                                        std::ref(this->unfulfilledTasks), 
                                        std::ref(this->completedTasks), 
-                                       std::ref(this->controller), 
+                                       std::ref(this->threadControllers[this->threads[i].get_id()]), 
                                        std::ref(this->threadsStatus[this->threads[i].get_id()]));        
-        this->threads[i].detach();
+         this->threads[i].detach();
     }
 }
 
 // Остановка всех потоков(посылаеться сигнал они заканчивают выполнение уже начатой задачи и больше задачь не берут)
 void Thread_Pool::ThreadPool::stop()
 {
-    this->controller = false;
     bool allStatus = false;
+    completedTasksMutex.lock();
+    for (auto controller = this->threadControllers.begin(); controller != this->threadControllers.end(); ++controller) {
+        (controller->second) = false;
+    }
+    completedTasksMutex.unlock();
     do {
         allStatus = false;
         for(auto oneStatus = this->threadsStatus.begin(); oneStatus != this->threadsStatus.end(); ++oneStatus) {
-            allStatus |= *oneStatus->second;
+            allStatus |= oneStatus->second;
         }
     } while (allStatus);
+}
+
+// Остановка одного потока 
+void Thread_Pool::ThreadPool::stop(const std::thread::id& sourceID)
+{
+    auto threadController = this->threadControllers.find(sourceID);
+    if(threadController == this->threadControllers.end()) {
+        std::cerr << "\033[33m" << "[WARNING] Thread with id: " << sourceID << " was not founded..." << "\033[0m" << std::endl;
+        return;
+    }
+
+    completedTasksMutex.lock();
+    (threadController->second) = false;
+    completedTasksMutex.unlock();
+
+    while(this->threadsStatus[sourceID]){}
 }
 
 
@@ -104,7 +127,7 @@ std::optional<Thread_Pool::Task<Result, TypeArgs...>> Thread_Pool::ThreadPool::g
     if(foundTaskIter == this->completedTasks.end()) {
         return std::nullopt;
     }
-    std::shared_ptr<Task<Result, TypeArgs...>> foundTaskPtr = std::dynamic_pointer_cast<Task<Result, TypeArgs...>>((foundTaskIter->second));
+    std::shared_ptr<Task<Result, TypeArgs...>> foundTaskPtr = std::dynamic_pointer_cast<Task<Result, TypeArgs...>>(std::move(foundTaskIter->second));
     if(foundTaskPtr == nullptr) {
         return std::nullopt;
     }

@@ -2,6 +2,7 @@
 #define TASK_HPP
 #include<mutex>
 #include<string>
+#include<format>
 #include<sstream>
 #include<iostream>
 #include<optional>
@@ -14,8 +15,9 @@ namespace Thread_Pool
 
 // Мьютекс для вывода ошибки в поток 
     std::mutex cerrMutex;
+// Вспомогающая переменная для ID
     static size_t tempID = 0;
-// Преобразование в string
+// Преобразование std::thread::id к string
     std::string thread_id_to_string(const std::thread::id& source);
 
     /*==================================================*/
@@ -26,12 +28,14 @@ namespace Thread_Pool
     class BaseTask
     {
     protected:
+    // Хранилище ошибок
         std::optional<std::runtime_error> taskError;
     public:
         BaseTask() = default;
         virtual ~BaseTask() = default;
         virtual size_t getID() const = 0;
         virtual void start() = 0;
+    // Получение ошибки
         std::optional<std::runtime_error> showError() const;
     };
 
