@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/nikita/Desktop/programming_practies/testCMake/build",
+  "command": "/usr/bin/c++  -I/home/nikita/Desktop/programming_practies/testCMake/file -g -std=gnu++20 -o CMakeFiles/testProjectExe.dir/src/main.cpp.o -c /home/nikita/Desktop/programming_practies/testCMake/src/main.cpp",
+  "file": "/home/nikita/Desktop/programming_practies/testCMake/src/main.cpp",
+  "output": "CMakeFiles/testProjectExe.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/nikita/Desktop/programming_practies/testCMake/build",
+  "command": "/usr/bin/c++  -I/home/nikita/Desktop/programming_practies/testCMake/file -g -std=gnu++20 -o CMakeFiles/testProjectExe.dir/src/file/file.cpp.o -c /home/nikita/Desktop/programming_practies/testCMake/src/file/file.cpp",
+  "file": "/home/nikita/Desktop/programming_practies/testCMake/src/file/file.cpp",
+  "output": "CMakeFiles/testProjectExe.dir/src/file/file.cpp.o"
+}
+]

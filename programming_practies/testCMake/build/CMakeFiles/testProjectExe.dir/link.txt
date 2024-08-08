@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/testProjectExe.dir/src/main.cpp.o CMakeFiles/testProjectExe.dir/src/file/file.cpp.o -o testProjectExe 
