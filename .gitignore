@@ -11,7 +11,8 @@ bazel-*
 MODULE.bazel.lock
 *.cache
 
-# #CMake build
+
+#CMake build
 build/
 
 # Prerequisites
