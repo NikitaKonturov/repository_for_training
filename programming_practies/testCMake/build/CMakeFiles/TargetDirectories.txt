@@ -1,0 +1,3 @@
+/home/nikita/Desktop/programming_practies/testCMake/build/CMakeFiles/testProjectExe.dir
+/home/nikita/Desktop/programming_practies/testCMake/build/CMakeFiles/edit_cache.dir
+/home/nikita/Desktop/programming_practies/testCMake/build/CMakeFiles/rebuild_cache.dir
